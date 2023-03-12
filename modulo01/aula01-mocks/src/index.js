@@ -11,7 +11,9 @@ class File {
     static async csvToJson(filePath) {
         const content = await File.getFileContent(filePath)
         const validation = File.isInvalid(content)
-
+        if (!validation.valid) {
+            throw new Error(validation.error)
+        }
         return content
     }
 
@@ -23,10 +25,24 @@ class File {
     static isInvalid(csvString, options = DEFAULT_OPTIONS) {
         // const lines = csvString.split("\n")
         const [header, ...withoutHeaders] = csvString.split("\n")
-        const isHeaderValid = header === options.fields.join(',')
+        const headerNormalized = header.replace("\r", "")
+
+        const isHeaderValid = headerNormalized === options.fields.join(',')
         if (!isHeaderValid) {
             return {
                 error: error.FILE_FIELDS_ERROR_MESSAGE,
+                valid: false
+            }
+        }
+
+        const isContentLengthValid = (
+            withoutHeaders.length > 0 &&
+            withoutHeaders.length <= options.maxLines
+        )
+
+        if (!isContentLengthValid) {
+            return {
+                error: error.FILE_LENGTH_ERROR_MESSAGE,
                 valid: false
             }
         }
@@ -34,13 +50,13 @@ class File {
 }
 
 (async () => {
-    // const result = await File.csvToJson('../mocks/invalid-header.csv')
+    const result = await File.csvToJson('../mocks/fourItems-invalid.csv')
     // const test = await File.isInvalid('../mocks/invalid-header.csv')
-    const [result, test] = await Promise.all([
-        File.csvToJson('../mocks/threeItems-valid.csv'),
-        File.isInvalid('../mocks/invalid-header.csv')
-    ])
+    // const [result, test] = await Promise.all([
+    //     File.csvToJson('../mocks/threeItems-valid.csv'),
+    //     File.isInvalid('../mocks/invalid-header.csv')
+    // ])
 
     console.log("result: ", result)
-    console.log("test: ", test)
+    // console.log("test: ", test)
 })()
