@@ -1,5 +1,7 @@
 const { readFile } = require('fs/promises')
 const { join } = require('path')
+const { error } = require('./constants')
+
 const DEFAULT_OPTIONS = {
     maxLines: 3,
     fields: ['id', 'name', 'profession', 'age']
@@ -20,8 +22,14 @@ class File {
 
     static isInvalid(csvString, options = DEFAULT_OPTIONS) {
         // const lines = csvString.split("\n")
-        const [headers, ...withoutHeaders] = csvString.split("\n")
-        console.log('lines: ', )
+        const [header, ...withoutHeaders] = csvString.split("\n")
+        const isHeaderValid = header === options.fields.join(',')
+        if (!isHeaderValid) {
+            return {
+                error: error.FILE_FIELDS_ERROR_MESSAGE,
+                valid: false
+            }
+        }
     }
 }
 
