@@ -21,7 +21,7 @@ class File {
     static isInvalid(csvString, options = DEFAULT_OPTIONS) {
         // const lines = csvString.split("\n")
         const [headers, ...withoutHeaders] = csvString.split("\n")
-        console.log('lines: ', lines)
+        console.log('lines: ', )
     }
 }
 
