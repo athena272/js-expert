@@ -34,6 +34,13 @@ class File {
 }
 
 (async () => {
-    const result = await File.csvToJson('../mocks/fourItems-invalid.csv')
+    // const result = await File.csvToJson('../mocks/invalid-header.csv')
+    // const test = await File.isInvalid('../mocks/invalid-header.csv')
+    const [result, test] = await Promise.all([
+        File.csvToJson('../mocks/threeItems-valid.csv'),
+        File.isInvalid('../mocks/invalid-header.csv')
+    ])
+
     console.log("result: ", result)
+    console.log("test: ", test)
 })()
