@@ -9,20 +9,22 @@ const DEFAULT_OPTIONS = {
 
 class File {
     static async csvToJson(filePath) {
+
         const content = await File.getFileContent(filePath)
-        const validation = File.isInvalid(content)
+        const validation = File.isValid(content)
         if (!validation.valid) {
             throw new Error(validation.error)
         }
+
         return content
+
     }
 
     static async getFileContent(filePath) {
-        const filename = join(__dirname, filePath)
-        return (await readFile(filename)).toString("utf-8")
+        return (await readFile(filePath)).toString("utf-8")
     }
 
-    static isInvalid(csvString, options = DEFAULT_OPTIONS) {
+    static isValid(csvString, options = DEFAULT_OPTIONS) {
         // const lines = csvString.split("\n")
         const [header, ...withoutHeaders] = csvString.split("\n")
         const headerNormalized = header.replace("\r", "")
@@ -46,17 +48,22 @@ class File {
                 valid: false
             }
         }
+
+        return { valid: true }
     }
 }
 
-(async () => {
-    const result = await File.csvToJson('../mocks/fourItems-invalid.csv')
-    // const test = await File.isInvalid('../mocks/invalid-header.csv')
-    // const [result, test] = await Promise.all([
-    //     File.csvToJson('../mocks/threeItems-valid.csv'),
-    //     File.isInvalid('../mocks/invalid-header.csv')
-    // ])
+// (async () => {
+//     // const result = await File.csvToJson('../mocks/threeItems-valid.csv')
+//     // const result = await File.csvToJson('../mocks/fourItems-invalid.csv')
+//     const result = await File.isValid('../mocks/invalid-header.csv')
+//     // const [result, test] = await Promise.all([
+//     //     File.csvToJson('../mocks/threeItems-valid.csv'),
+//     //     File.isValid('../mocks/invalid-header.csv')
+//     // ])
 
-    console.log("result: ", result)
-    // console.log("test: ", test)
-})()
+//     console.log("result: ", result)
+//     // console.log("test: ", test)
+// })()
+
+module.exports = File
